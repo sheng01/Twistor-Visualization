@@ -1,0 +1,36 @@
+```julia
+using TensorOperations
+using DifferentialEquations
+using Plots
+
+# Parameters
+m1 = 1.0  # Mass 1
+m2 = 1.0  # Mass 2
+k1 = 10.0  # Spring constant for spring 1
+k2 = 10.0  # Spring constant for spring 2
+time_span = (0.0, 10.0)  # Simulation time
+
+# Initial conditions: [x1, v1, x2, v2]
+initial_conditions = [1.0, 0.0, 0.5, 0.0]  # Initial positions and velocities
+
+# Define the system of equations
+function coupled_system!(du, u, p, t)
+    x1, v1, x2, v2 = u
+
+    # Equations of motion
+    du[1] = v1  # dx1/dt = v1
+    du[2] = (-k1/m1) * x1 + (k2/m1) * (x2 - x1)  # dv1/dt
+    du[3] = v2  # dx2/dt = v2
+    du[4] = (-k2/m2) * (x2 - x1)  # dv2/dt
+end
+
+# Create the problem
+prob = ODEProblem(coupled_system!, initial_conditions, time_span)
+
+# Solve the problem
+sol = solve(prob)
+
+# Plot the results
+plot(sol.t, sol[1, :], label="Mass 1 Position", xlabel="Time", ylabel="Position", legend=:topright)
+plot!(sol.t, sol[3, :], label="Mass 2 Position")
+```
