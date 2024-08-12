@@ -1,0 +1,26 @@
+```julia
+using TensorOperations
+using Plots
+
+# Define parameters
+mass = 1.0
+stiffness = 10.0
+time_span = 0:0.01:10  # Simulation time
+
+# Initial conditions
+x0 = [1.0, 0.0]  # Initial position and velocity
+
+# Define the system of equations
+function spring_system!(du, u, p, t)
+    du[1] = u[2]
+    du[2] = -stiffness/mass * u[1]
+end
+
+# Use a numerical solver (like DifferentialEquations.jl)
+using DifferentialEquations
+prob = ODEProblem(spring_system!, x0, (time_span[1], time_span[end]))
+sol = solve(prob)
+
+# Plot the results
+plot(sol.t, sol[1, :], label="Position", xlabel="Time", ylabel="Displacement")
+```
